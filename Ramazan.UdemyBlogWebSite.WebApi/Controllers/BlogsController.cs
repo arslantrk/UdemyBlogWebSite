@@ -93,5 +93,7 @@ namespace Ramazan.UdemyBlogWebSite.WebApi.Controllers
             await _blogService.DeleteAsync(new Blog { Id = id });
             return NoContent();
         }
+        [HttpPut]
+
     }
 }
