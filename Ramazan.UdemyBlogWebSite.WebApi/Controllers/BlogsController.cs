@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ramazan.UdemyBlogWebSite.Business.Interfaces;
 using Ramazan.UdemyBlogWebSite.Dto.DTOs.BlogDtos;
+using Ramazan.UdemyBlogWebSite.Dto.DTOs.CategoryBlogDtos;
 using Ramazan.UdemyBlogWebSite.Entities.Concreate;
+using Ramazan.UdemyBlogWebSite.WebApi.CustomFilters;
 using Ramazan.UdemyBlogWebSite.WebApi.Enums;
 using Ramazan.UdemyBlogWebSite.WebApi.Models;
 using System;
@@ -31,11 +34,14 @@ namespace Ramazan.UdemyBlogWebSite.WebApi.Controllers
             return Ok(_mapper.Map<List<BlogListDto>>(await _blogService.GetAllSortedByPostedTimeAsnync()));
         }
         [HttpGet("{id}")]
+        [ServiceFilter(typeof(ValidId<Blog>))]
         public async Task<IActionResult> GetById(int id)
         {
             return Ok(_mapper.Map<BlogListDto>(await _blogService.FindByIdAsync(id)));
         }
         [HttpPost]
+        [Authorize]
+        [ValidModel]
         public async Task<IActionResult> Create([FromForm]BlogAddModel blogAddModel)//Blog oluşumu
         {
             var uploadModel = await UploadFileAsync(blogAddModel.Image, "image/jpeg");
@@ -56,6 +62,9 @@ namespace Ramazan.UdemyBlogWebSite.WebApi.Controllers
             }
         }
         [HttpPut("{id}")]
+        [Authorize]
+        [ValidModel]
+        [ServiceFilter(typeof(ValidId<Blog>))]
         public async Task<IActionResult> Update(int id, [FromForm]BlogUpdateModel blogUpdateModel)
         {
 
@@ -88,12 +97,33 @@ namespace Ramazan.UdemyBlogWebSite.WebApi.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [Authorize]
+        [ServiceFilter(typeof(ValidId<Blog>))]
         public async Task<IActionResult> Delete(int id)
         {
             await _blogService.DeleteAsync(new Blog { Id = id });
             return NoContent();
         }
-        [HttpPut]
 
+        [HttpPost("[action]")]
+        [ValidModel]
+        public async Task<IActionResult> AddToCategory(CategoryBlogDto categoryBlogDto)
+        {
+            await _blogService.AddToCategoryAsync(categoryBlogDto);
+            return Created("", categoryBlogDto);
+        }
+
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> RemoveFromCategory(CategoryBlogDto categoryBlogDto)
+        {
+            await _blogService.RemoveFromCategoryAsync(categoryBlogDto);
+            return NoContent();
+        }
+        [HttpGet("[action]/{id}")]
+        [ServiceFilter(typeof(ValidId<Category>))]
+        public async Task<IActionResult> GetAllByCategoryId(int id)
+        {
+            return Ok(await _blogService.GetAllByCategoryIdAsync(id));
+        }
     }
 }

@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ValidationRules\" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ramazan.UdemyBlogWebSite.DataAccess\Ramazan.UdemyBlogWebSite.DataAccess.csproj" />
+    <ProjectReference Include="..\Ramazan.UdemyBlogWebSite.Dto\Ramazan.UdemyBlogWebSite.Dto.csproj" />
     <ProjectReference Include="..\Ramazan.UdemyBlogWebSite.Entities\Ramazan.UdemyBlogWebSite.Entities.csproj" />
   </ItemGroup>
 

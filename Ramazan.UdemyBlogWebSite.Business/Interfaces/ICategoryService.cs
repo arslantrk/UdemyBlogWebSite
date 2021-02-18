@@ -8,6 +8,7 @@ namespace Ramazan.UdemyBlogWebSite.Business.Interfaces
 {
     public interface ICategoryService : IGenericService<Category>
     {
-        Task<List<Category>> GetAllSortedById();
+        Task<List<Category>> GetAllSortedByIdAsync();
+        Task<List<Category>> GetAllWithCategoryBlogsAsync();
     }
 }
